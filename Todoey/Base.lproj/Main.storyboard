@@ -31,7 +31,14 @@
                             <outlet property="delegate" destination="j6n-6z-Pxn" id="S5Z-e0-5WU"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="DoneHub" id="hrZ-SA-p9K"/>
+                    <navigationItem key="navigationItem" title="DoneHub" id="hrZ-SA-p9K">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="qhU-v7-rTS">
+                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <connections>
+                                <action selector="addButtonPressed:" destination="j6n-6z-Pxn" id="QEr-44-sIQ"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Xij-xD-r3P" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
