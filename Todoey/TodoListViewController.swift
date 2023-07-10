@@ -11,7 +11,7 @@ import UIKit
 class TodoListViewController: UITableViewController {
     
     let itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -33,11 +33,17 @@ class TodoListViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(itemArray[indexPath.row])
-        
+        if (tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark){
+            tableView.cellForRow(at: indexPath)?.accessoryType = .none
+            
+        }else{
+            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
+            
+        }
         tableView.deselectRow(at: indexPath, animated: true)
-
+        
     }
     
-
-
+    
+    
 }
