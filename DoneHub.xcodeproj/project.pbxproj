@@ -62,7 +62,7 @@
 				ECA6B4342A5DFF5A000BF702 /* Views */,
 				EB2BE502239524DC00FB933B /* Assets.xcassets */,
 				EB2BE504239524DC00FB933B /* LaunchScreen.storyboard */,
-				ECA6B4352A5DFF90000BF702 /* Supporting Files */,
+				EB2BE507239524DC00FB933B /* Info.plist */,
 			);
 			path = Todoey;
 			sourceTree = "<group>";
@@ -89,14 +89,6 @@
 				EB2BE4FF239524DB00FB933B /* Main.storyboard */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		ECA6B4352A5DFF90000BF702 /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				EB2BE507239524DC00FB933B /* Info.plist */,
-			);
-			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

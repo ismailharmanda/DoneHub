@@ -16,4 +16,8 @@ class Item {
         self.title = title
         self.isDone = isDone
     }
+    
+    func toggle() {
+        self.isDone = !self.isDone
+    }
 }
