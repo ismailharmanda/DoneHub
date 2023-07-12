@@ -14,6 +14,9 @@ class TodoListViewController: UITableViewController {
     
     let defaults = UserDefaults.standard
     
+    let encoder = JSONEncoder()
+    let decoder = JSONDecoder()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -22,6 +25,14 @@ class TodoListViewController: UITableViewController {
         let newItem3 = Item(title:"Destroy Demogorgon")
         
         itemArray += [newItem1,newItem2,newItem3]
+        
+        if let safeItemArray = defaults.data(forKey: "TodoListArray") {
+            do {
+                itemArray = try self.decoder.decode( [Item].self, from: safeItemArray)
+            }   catch {
+                print(error)
+            }
+        }
         
     }
     
@@ -40,7 +51,7 @@ class TodoListViewController: UITableViewController {
         
         cell.accessoryType = selectedItem.isDone ? .checkmark : .none
         
-
+        
         
         return cell
     }
@@ -78,11 +89,20 @@ class TodoListViewController: UITableViewController {
                 
                 self.itemArray.append(newItem)
                 
-                self.defaults.set(self.itemArray, forKey: "TodoListArray")
+                do {
+                    
+                    let encodedItemArray = try self.encoder.encode(self.itemArray)
+                    
+                    self.defaults.set(encodedItemArray, forKey: "TodoListArray")
+                    
+                } catch{
+                    
+                    print(error)
+                }
                 
                 self.tableView.reloadData()
             }
-
+            
         }
         
         alert.addTextField { alertTextField in
