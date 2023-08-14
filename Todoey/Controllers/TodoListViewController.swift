@@ -8,31 +8,25 @@
 
 import UIKit
 
+@available(iOS 16.0, *)
 class TodoListViewController: UITableViewController {
     
     var itemArray = [Item]()
     
-    let defaults = UserDefaults.standard
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(path: "Items.plist")
     
-    let encoder = JSONEncoder()
-    let decoder = JSONDecoder()
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        let newItem1 = Item(title:"Find Mike")
-        let newItem2 = Item(title:"Buy Eggos")
-        let newItem3 = Item(title:"Destroy Demogorgon")
         
-        itemArray += [newItem1,newItem2,newItem3]
-        
-        if let safeItemArray = defaults.data(forKey: "TodoListArray") {
-            do {
-                itemArray = try self.decoder.decode( [Item].self, from: safeItemArray)
-            }   catch {
-                print(error)
-            }
-        }
+//        let newItem1 = Item(title:"Find Mike")
+//        let newItem2 = Item(title:"Buy Eggos")
+//        let newItem3 = Item(title:"Destroy Demogorgon")
+//        
+//        itemArray += [newItem1,newItem2,newItem3]
+        loadItems()
         
     }
     
@@ -64,7 +58,7 @@ class TodoListViewController: UITableViewController {
         
         selectedItem.toggle()
         
-        tableView.reloadData()
+        saveItems()
         
         tableView.deselectRow(at: indexPath, animated: true)
         
@@ -89,18 +83,7 @@ class TodoListViewController: UITableViewController {
                 
                 self.itemArray.append(newItem)
                 
-                do {
-                    
-                    let encodedItemArray = try self.encoder.encode(self.itemArray)
-                    
-                    self.defaults.set(encodedItemArray, forKey: "TodoListArray")
-                    
-                } catch{
-                    
-                    print(error)
-                }
-                
-                self.tableView.reloadData()
+                self.saveItems()
             }
             
         }
@@ -113,5 +96,33 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true)
     }
     
+    func saveItems(){
+        
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(itemArray)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error encoding item array, \(error)")
+        }
+        
+        self.tableView.reloadData()
+        
+    }
+    
+    func loadItems(){
+        
+        
+        if let safeItems = try? Data(contentsOf: dataFilePath!){
+            let decoder = PropertyListDecoder()
+            do{
+                itemArray = try decoder.decode( [Item].self, from: safeItems)
+            }catch{
+                print(error)
+            }
+        }
+        
+    }
     
 }
