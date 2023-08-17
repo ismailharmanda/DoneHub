@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 @available(iOS 16.0, *)
 class TodoListViewController: UITableViewController {
@@ -15,18 +16,13 @@ class TodoListViewController: UITableViewController {
     
     let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(path: "Items.plist")
     
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-        
-//        let newItem1 = Item(title:"Find Mike")
-//        let newItem2 = Item(title:"Buy Eggos")
-//        let newItem3 = Item(title:"Destroy Demogorgon")
-//        
-//        itemArray += [newItem1,newItem2,newItem3]
-        loadItems()
+     loadItems()
         
     }
     
@@ -56,13 +52,23 @@ class TodoListViewController: UITableViewController {
         
         let selectedItem = itemArray[indexPath.row]
         
-        selectedItem.toggle()
+        selectedItem.isDone = !selectedItem.isDone
         
         saveItems()
         
         tableView.deselectRow(at: indexPath, animated: true)
         
     }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+            if editingStyle == .delete {
+                let selectedItem = itemArray[indexPath.row]
+                context.delete(selectedItem)
+                itemArray.remove(at: indexPath.row)
+                saveItems()
+            }
+        }
+
     
     
     //MARK:  Add New Items
@@ -79,7 +85,9 @@ class TodoListViewController: UITableViewController {
             // What will happen once the user clicks the Add Item button on our UIAlert
             if let safeText = textField.text{
                 
-                let newItem = Item(title:safeText)
+                let newItem = Item(context: self.context)
+                
+                newItem.title = safeText
                 
                 self.itemArray.append(newItem)
                 
@@ -98,13 +106,12 @@ class TodoListViewController: UITableViewController {
     
     func saveItems(){
         
-        let encoder = PropertyListEncoder()
-        
         do {
-            let data = try encoder.encode(itemArray)
-            try data.write(to: dataFilePath!)
+            try context.save()
+
         } catch {
-            print("Error encoding item array, \(error)")
+            print("Error saving context \(error)")
+         
         }
         
         self.tableView.reloadData()
@@ -113,16 +120,19 @@ class TodoListViewController: UITableViewController {
     
     func loadItems(){
         
-        
-        if let safeItems = try? Data(contentsOf: dataFilePath!){
-            let decoder = PropertyListDecoder()
+        let request = Item.fetchRequest()
+
+
+   
             do{
-                itemArray = try decoder.decode( [Item].self, from: safeItems)
+              itemArray =  try context.fetch(request)
             }catch{
-                print(error)
+                print("Error fetching data from context \(error)")
             }
-        }
         
+
     }
+    
+    
     
 }
