@@ -133,6 +133,18 @@ class TodoListViewController: UITableViewController {
 
     }
     
+
     
     
+    
+}
+
+//MARK:  Search bar methods
+
+@available(iOS 16.0, *)
+extension TodoListViewController: UISearchBarDelegate{
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        print("clicked")
+    }
 }
