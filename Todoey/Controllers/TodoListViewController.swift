@@ -20,9 +20,11 @@ class TodoListViewController: UITableViewController {
     
     
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-     loadItems()
+        loadItems()
         
     }
     
@@ -61,14 +63,14 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-            if editingStyle == .delete {
-                let selectedItem = itemArray[indexPath.row]
-                context.delete(selectedItem)
-                itemArray.remove(at: indexPath.row)
-                saveItems()
-            }
+        if editingStyle == .delete {
+            let selectedItem = itemArray[indexPath.row]
+            context.delete(selectedItem)
+            itemArray.remove(at: indexPath.row)
+            saveItems()
         }
-
+    }
+    
     
     
     //MARK:  Add New Items
@@ -108,32 +110,27 @@ class TodoListViewController: UITableViewController {
         
         do {
             try context.save()
-
+            
         } catch {
             print("Error saving context \(error)")
-         
+            
         }
         
         self.tableView.reloadData()
         
     }
     
-    func loadItems(){
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
+        do{
+            itemArray =  try context.fetch(request)
+        }catch{
+            print("Error fetching data from context \(error)")
+        }
         
-        let request = Item.fetchRequest()
-
-
-   
-            do{
-              itemArray =  try context.fetch(request)
-            }catch{
-                print("Error fetching data from context \(error)")
-            }
         
-
     }
     
-
+    
     
     
     
@@ -144,7 +141,60 @@ class TodoListViewController: UITableViewController {
 @available(iOS 16.0, *)
 extension TodoListViewController: UISearchBarDelegate{
     
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print("clicked")
+    //    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    //        let request = Item.fetchRequest()
+    //
+    //        let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+    //
+    //        request.predicate = predicate
+    //
+    //        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+    //
+    //        request.sortDescriptors = [sortDescriptor]
+    //
+    //        do{
+    //         itemArray =  try context.fetch(request)
+    //        }catch{
+    //            print("Error fetching data from context \(error)")
+    //        }
+    //
+    //        self.tableView.reloadData()
+    //    }
+    
+    
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if (containsOnlySpacesOrEmpty(searchText)){
+            loadItems()
+        } else {
+            
+            let request = Item.fetchRequest()
+            
+            let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+            
+            request.predicate = predicate
+            
+            let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+            
+            request.sortDescriptors = [sortDescriptor]
+            
+            loadItems(with: request)
+        }
+        
+        
+        
+        
+        self.tableView.reloadData()
+        
     }
+    
+    func containsOnlySpacesOrEmpty(_ text: String) -> Bool {
+        // Trim the input text to remove leading and trailing spaces
+        let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Check if the trimmed text is either empty or contains only spaces
+        return trimmedText.isEmpty
+    }
+    
 }
