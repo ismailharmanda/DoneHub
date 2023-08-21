@@ -10,24 +10,18 @@ import UIKit
 import CoreData
 
 @available(iOS 16.0, *)
-class TodoListViewController: UITableViewController {
+class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     var itemArray = [Item]()
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appending(path: "Items.plist")
-    
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    
-    
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         loadItems()
-        
     }
-    
     //MARK:  TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -161,6 +155,9 @@ extension TodoListViewController: UISearchBarDelegate{
     //        self.tableView.reloadData()
     //    }
     
+   
+
+    
     
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -182,10 +179,15 @@ extension TodoListViewController: UISearchBarDelegate{
             loadItems(with: request)
         }
         
-        
-        
-        
         self.tableView.reloadData()
+        
+    }
+        
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        DispatchQueue.main.async {
+            searchBar.resignFirstResponder()
+        }
         
     }
     
