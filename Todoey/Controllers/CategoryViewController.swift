@@ -12,7 +12,7 @@ import CoreData
 @available(iOS 16.0, *)
 class CategoryViewController: UITableViewController {
     
-    var itemArray = [Category]()
+    var categories = [Category]()
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
 
@@ -41,7 +41,7 @@ class CategoryViewController: UITableViewController {
                 
                 newItem.name = safeText
                 
-                self.itemArray.append(newItem)
+                self.categories.append(newItem)
                 
                 self.saveItems()
             }
@@ -80,7 +80,7 @@ class CategoryViewController: UITableViewController {
     
     func loadItems(with request: NSFetchRequest<Category> = Category.fetchRequest()){
         do{
-            itemArray =  try context.fetch(request)
+            categories =  try context.fetch(request)
         }catch{
             print("Error fetching data from context \(error)")
         }
@@ -91,13 +91,13 @@ class CategoryViewController: UITableViewController {
     //MARK:  TableView Datasource Methods
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        itemArray.count
+        categories.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryItemCell", for: indexPath)
         
-        let selectedItem = itemArray[indexPath.row]
+        let selectedItem = categories[indexPath.row]
         
         cell.textLabel?.text = selectedItem.name
         
@@ -112,23 +112,31 @@ class CategoryViewController: UITableViewController {
     
     //MARK:  TableView Delegate Methods
     
-//    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//
-//        let selectedItem = itemArray[indexPath.row]
-//
-//        selectedItem.isDone = !selectedItem.isDone
-//
-//        saveItems()
-//
-//        tableView.deselectRow(at: indexPath, animated: true)
-//
-//    }
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+//        let selectedItem = categories[indexPath.row]
+        
+    
+        
+        performSegue(withIdentifier: "goToItems", sender: self)
+        
+
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        let destinationVC = segue.destination as! TodoListViewController
+        
+        if let indexPath = tableView.indexPathForSelectedRow{
+            destinationVC.selectedCategory = categories[indexPath.row]
+        }
+
+    }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let selectedItem = itemArray[indexPath.row]
+            let selectedItem = categories[indexPath.row]
             context.delete(selectedItem)
-            itemArray.remove(at: indexPath.row)
+            categories.remove(at: indexPath.row)
             saveItems()
         }
     }

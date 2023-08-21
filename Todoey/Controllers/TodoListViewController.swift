@@ -16,6 +16,13 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
+    var selectedCategory: Category? {
+        didSet{
+            self.navigationItem.title = self.selectedCategory?.name
+            loadItems()
+        }
+    }
+    
     
     
     override func viewDidLoad() {
@@ -84,6 +91,7 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
                 let newItem = Item(context: self.context)
                 
                 newItem.title = safeText
+                newItem.parentCategory = self.selectedCategory
                 
                 self.itemArray.append(newItem)
                 
@@ -114,7 +122,22 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         
     }
     
-    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest()){
+    func loadItems(with request: NSFetchRequest<Item> = Item.fetchRequest(), predicate: NSPredicate? = nil){
+        
+  
+        let categoryPredicate = NSPredicate(format: "parentCategory.name == %@", selectedCategory!.name!)
+        
+        if let additionalPredicate = predicate {
+            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [additionalPredicate, categoryPredicate])
+            request.predicate = compoundPredicate
+        } else {
+            request.predicate = categoryPredicate
+        }
+        
+    
+        
+        
+        
         do{
             itemArray =  try context.fetch(request)
         }catch{
@@ -176,7 +199,7 @@ extension TodoListViewController: UISearchBarDelegate{
             
             request.sortDescriptors = [sortDescriptor]
             
-            loadItems(with: request)
+            loadItems(with: request, predicate: predicate)
         }
         
         self.tableView.reloadData()
