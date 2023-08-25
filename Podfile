@@ -7,6 +7,6 @@ target 'DoneHub' do
 
   # Pods for DoneHub
 
-pod 'RealmSwift', '~>10'
+pod 'RealmSwift', '~> 10.42'
 
 end
