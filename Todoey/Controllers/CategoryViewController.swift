@@ -100,6 +100,7 @@ class CategoryViewController: UITableViewController {
     func delete(category: RealmCategory){
         do{
             try realm.write{
+                realm.delete(category.items)
                 realm.delete(category)
             }
         } catch {
