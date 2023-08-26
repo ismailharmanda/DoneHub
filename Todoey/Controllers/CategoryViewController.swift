@@ -129,7 +129,7 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryItemCell", for: indexPath)
-        
+        tableView.rowHeight = 80
 //        let selectedItem = categories[indexPath.row]
 //
 //        cell.textLabel?.text = selectedItem.name

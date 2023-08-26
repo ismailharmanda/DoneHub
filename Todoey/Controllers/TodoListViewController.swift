@@ -49,7 +49,7 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        
+        tableView.rowHeight = 80
         cell.textLabel?.numberOfLines = 0;
         cell.textLabel?.lineBreakMode = .byWordWrapping;
         
