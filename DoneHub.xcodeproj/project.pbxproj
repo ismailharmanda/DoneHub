@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,6 +14,7 @@
 		EB2BE503239524DC00FB933B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB2BE502239524DC00FB933B /* Assets.xcassets */; };
 		EB2BE506239524DC00FB933B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EB2BE504239524DC00FB933B /* LaunchScreen.storyboard */; };
 		EC1707DD2A93A54D000EE1A7 /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1707DC2A93A54D000EE1A7 /* CategoryViewController.swift */; };
+		EC5AE1A32A9C8970000E2516 /* Chameleon in Frameworks */ = {isa = PBXBuildFile; productRef = EC5AE1A22A9C8970000E2516 /* Chameleon */; };
 		ECBF665B2A973BED000C71D2 /* RealmItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF665A2A973BED000C71D2 /* RealmItem.swift */; };
 		ECBF665D2A973C05000C71D2 /* RealmCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBF665C2A973C05000C71D2 /* RealmCategory.swift */; };
 		ECD152CA2A8E2BCF002400C9 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = ECD152C82A8E2BCF002400C9 /* DataModel.xcdatamodeld */; };
@@ -42,6 +43,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCB31883DD98B702B44736B1 /* Pods_DoneHub.framework in Frameworks */,
+				EC5AE1A32A9C8970000E2516 /* Chameleon in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -142,6 +144,9 @@
 			dependencies = (
 			);
 			name = DoneHub;
+			packageProductDependencies = (
+				EC5AE1A22A9C8970000E2516 /* Chameleon */,
+			);
 			productName = Todoey;
 			productReference = EB2BE4F6239524DB00FB933B /* DoneHub.app */;
 			productType = "com.apple.product-type.application";
@@ -170,6 +175,9 @@
 				Base,
 			);
 			mainGroup = EB2BE4ED239524DB00FB933B;
+			packageReferences = (
+				EC5AE1A12A9C8970000E2516 /* XCRemoteSwiftPackageReference "ChameleonFramework" */,
+			);
 			productRefGroup = EB2BE4F7239524DB00FB933B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -448,6 +456,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EC5AE1A12A9C8970000E2516 /* XCRemoteSwiftPackageReference "ChameleonFramework" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/starkdmi/ChameleonFramework.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EC5AE1A22A9C8970000E2516 /* Chameleon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EC5AE1A12A9C8970000E2516 /* XCRemoteSwiftPackageReference "ChameleonFramework" */;
+			productName = Chameleon;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		ECD152C82A8E2BCF002400C9 /* DataModel.xcdatamodeld */ = {

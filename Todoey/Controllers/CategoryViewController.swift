@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import RealmSwift
+import Chameleon
 
 @available(iOS 16.0, *)
 class CategoryViewController: UITableViewController {
@@ -24,7 +25,9 @@ class CategoryViewController: UITableViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
+        tableView.separatorStyle = .none
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(sender:)))
+        tableView.addGestureRecognizer(longPress)
         loadCategories()
 
     }
@@ -52,6 +55,7 @@ class CategoryViewController: UITableViewController {
                 
 //                self.saveItems()
                 self.save(category: newCategory)
+                
             }
             
         }
@@ -70,6 +74,54 @@ class CategoryViewController: UITableViewController {
         alert.addAction(addAction)
         alert.addAction(cancelAction)
         present(alert, animated: true)
+    }
+    
+    @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            let touchPoint = sender.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                // your code here, get the row for the indexPath or do whatever you want
+                var textField = UITextField()
+                
+                let alert  = UIAlertController(title: "Edit Category Name", message: "", preferredStyle:.alert)
+                
+                let addAction = UIAlertAction(title: "Edit", style: .default){
+                    (action) in
+                    // What will happen once the user clicks the Add Item button on our UIAlert
+                    if let safeText = textField.text{
+                        
+                        var category = self.categories?[indexPath.row]
+                
+                        do{
+                            try self.realm.write{
+                                category?.name = safeText
+                            }
+                            self.tableView.reloadData()
+                        } catch {
+                            print("Error saving category \(error)")
+                        }
+                    }
+                    
+                    
+                }
+                
+                
+                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+                    // Handle cancellation, e.g., dismiss the alert
+                    alert.dismiss(animated: true, completion: nil)
+                }
+                
+                alert.addTextField { alertTextField in
+                    alertTextField.placeholder = "Type a new name"
+                    textField = alertTextField
+                    textField.text = self.categories?[indexPath.row].name
+                }
+            
+                alert.addAction(addAction)
+                alert.addAction(cancelAction)
+                present(alert, animated: true)
+            }
+        }
     }
     
 //    func saveCategories(){
@@ -130,12 +182,16 @@ class CategoryViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryItemCell", for: indexPath)
+
         tableView.rowHeight = 80
 //        let selectedItem = categories[indexPath.row]
 //
 //        cell.textLabel?.text = selectedItem.name
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet"
 //        cell.accessoryType = selectedItem.isDone ? .checkmark : .none
+        
+        cell.backgroundColor = UIColor(hexString: categories?[indexPath.row].backgroundColor ?? "#FFF")
+        cell.textLabel?.textColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: categories?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
         
         return cell
     }

@@ -10,6 +10,7 @@ import UIKit
 //import CoreData
 import RealmSwift
 
+
 @available(iOS 16.0, *)
 class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
@@ -38,6 +39,8 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(sender:)))
+        tableView.addGestureRecognizer(longPress)
         loadItems()
     }
     //MARK:  TableView Datasource Methods
@@ -49,9 +52,20 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-        tableView.rowHeight = 80
+       
+        var darkenPercentage : CGFloat = 1.0
+        if let itemCount = items?.count{
+            darkenPercentage = CGFloat(indexPath.row) / CGFloat(itemCount)
+        }
+
         cell.textLabel?.numberOfLines = 0;
         cell.textLabel?.lineBreakMode = .byWordWrapping;
+//        cell.backgroundColor = UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#FFF")
+        cell.backgroundColor = UIColor.flatSkyBlue().darken(byPercentage: darkenPercentage)
+//        cell.textLabel?.textColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
+//        cell.tintColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
+        cell.textLabel?.textColor = UIColor.white
+        cell.tintColor = UIColor.white
         
         //        let selectedItem = itemArray[indexPath.row]
         //
@@ -186,12 +200,68 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
             
         }
         
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            // Handle cancellation, e.g., dismiss the alert
+            alert.dismiss(animated: true, completion: nil)
+        }
+        
         alert.addTextField { alertTextField in
             alertTextField.placeholder = "Create new item"
             textField = alertTextField
+            
         }
+        
         alert.addAction(action)
+        alert.addAction(cancelAction)
         present(alert, animated: true)
+    }
+    
+    @objc private func handleLongPress(sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            let touchPoint = sender.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                // your code here, get the row for the indexPath or do whatever you want
+                var textField = UITextField()
+                
+                let alert  = UIAlertController(title: "Edit Todo Text", message: "", preferredStyle:.alert)
+                
+                let addAction = UIAlertAction(title: "Edit", style: .default){
+                    (action) in
+                    // What will happen once the user clicks the Add Item button on our UIAlert
+                    if let safeText = textField.text{
+                        
+                        var item = self.items?[indexPath.row]
+                
+                        do{
+                            try self.realm.write{
+                                item?.title = safeText
+                            }
+                            self.tableView.reloadData()
+                        } catch {
+                            print("Error saving category \(error)")
+                        }
+                    }
+                    
+                    
+                }
+                
+                
+                let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+                    // Handle cancellation, e.g., dismiss the alert
+                    alert.dismiss(animated: true, completion: nil)
+                }
+                
+                alert.addTextField { alertTextField in
+                    alertTextField.placeholder = "Type a new todo"
+                    textField = alertTextField
+                    textField.text = self.items?[indexPath.row].title
+                }
+            
+                alert.addAction(addAction)
+                alert.addAction(cancelAction)
+                present(alert, animated: true)
+            }
+        }
     }
     
     //    func saveItems(){

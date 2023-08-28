@@ -12,8 +12,8 @@ import RealmSwift
 class RealmItem: Object {
     @objc dynamic var title: String = ""
     @objc dynamic var done: Bool = false
-    
     @objc dynamic var dateCreated = Date()
+    @objc dynamic var backgroundColor: String = UIColor.randomFlat().hexValue()
     
     
     var parentCategory = LinkingObjects(fromType: RealmCategory.self , property: "items")
