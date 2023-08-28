@@ -64,7 +64,7 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         cell.backgroundColor = UIColor.flatSkyBlue().darken(byPercentage: darkenPercentage)
 //        cell.textLabel?.textColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
 //        cell.tintColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
-        cell.textLabel?.textColor = UIColor.white.darken(byPercentage: (darkenPercentage)/3.0)
+        cell.textLabel?.textColor = UIColor.flatWhite().darken(byPercentage: (darkenPercentage)/3.0)
         cell.tintColor = UIColor.white
         
         //        let selectedItem = itemArray[indexPath.row]
