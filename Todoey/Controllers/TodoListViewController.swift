@@ -14,6 +14,8 @@ import RealmSwift
 @available(iOS 16.0, *)
 class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
+    @IBOutlet weak var searchBar: UISearchBar!
+    
     let realm = try! Realm()
     
     //    var itemArray = [Item]()
@@ -29,19 +31,46 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     //    }
     var selectedCategory: RealmCategory? {
         didSet{
+    
             self.navigationItem.title = self.selectedCategory?.name
             loadItems()
         }
     }
     
-    
+    var originalNavBarAppearance: UINavigationBarAppearance?
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        searchBar.barTintColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")
+        
+        originalNavBarAppearance = navigationController?.navigationBar.standardAppearance
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: selectedCategory?.backgroundColor ?? "#FFFFFF") ?? .flatWhite(), isFlat: true) ]
+        appearance.backgroundColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")
+        // istediğiniz renk
+        
+        navigationController?.navigationBar.standardAppearance = appearance
+        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(sender:)))
         tableView.addGestureRecognizer(longPress)
+        
+        
         loadItems()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if let safeOriginalNavBarAppearance = originalNavBarAppearance{
+            navigationController?.navigationBar.standardAppearance = safeOriginalNavBarAppearance
+            navigationController?.navigationBar.scrollEdgeAppearance = safeOriginalNavBarAppearance
+        }
+        
     }
     //MARK:  TableView Datasource Methods
     
@@ -52,19 +81,19 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
-       
+        
         var darkenPercentage : CGFloat = 1.0
         if let itemCount = items?.count{
             darkenPercentage = CGFloat(indexPath.row) / CGFloat(itemCount)
         }
-
+        
         cell.textLabel?.numberOfLines = 0;
         cell.textLabel?.lineBreakMode = .byWordWrapping;
-//        cell.backgroundColor = UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#FFF")
-//        cell.backgroundColor = UIColor.flatSkyBlue().darken(byPercentage: darkenPercentage)
+        //        cell.backgroundColor = UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#FFF")
+        //        cell.backgroundColor = UIColor.flatSkyBlue().darken(byPercentage: darkenPercentage)
         cell.backgroundColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")!.darken(byPercentage: darkenPercentage)
-//        cell.textLabel?.textColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
-//        cell.tintColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
+        //        cell.textLabel?.textColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
+        //        cell.tintColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: items?[indexPath.row].backgroundColor ?? "#000")!, isFlat: true)
         cell.textLabel?.textColor = UIColor.white.darken(byPercentage: (darkenPercentage)/3.0)
         cell.tintColor = UIColor.white
         
@@ -105,8 +134,8 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
             do
             {
                 try realm.write {
-                item.done = !item.done
-            }
+                    item.done = !item.done
+                }
             }catch{
                 print("An error has been occured while updating item \(error)")
             }
@@ -117,11 +146,11 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         
         // Deselect animasyonunun tamamlanmasını bekleyip reloadData'ı çağırma
-          DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-              tableView.reloadData()
-          }
-
-       
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            tableView.reloadData()
+        }
+        
+        
         
     }
     
@@ -231,8 +260,8 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
                     // What will happen once the user clicks the Add Item button on our UIAlert
                     if let safeText = textField.text{
                         
-                        var item = self.items?[indexPath.row]
-                
+                        let item = self.items?[indexPath.row]
+                        
                         do{
                             try self.realm.write{
                                 item?.title = safeText
@@ -257,7 +286,7 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
                     textField = alertTextField
                     textField.text = self.items?[indexPath.row].title
                 }
-            
+                
                 alert.addAction(addAction)
                 alert.addAction(cancelAction)
                 present(alert, animated: true)
@@ -342,30 +371,36 @@ extension TodoListViewController: UISearchBarDelegate{
     
     
     
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//
-//        if (containsOnlySpacesOrEmpty(searchText)){
-//            loadItems()
-//        } else {
-//
-//            let request = Item.fetchRequest()
-//
-//            let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
-//
-//            request.predicate = predicate
-//
-//            let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
-//
-//            request.sortDescriptors = [sortDescriptor]
-//
-//            //            loadItems(with: request, predicate: predicate)
-//        }
-//
-//        self.tableView.reloadData()
-//
-//    }
+    //    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    //
+    //        if (containsOnlySpacesOrEmpty(searchText)){
+    //            loadItems()
+    //        } else {
+    //
+    //            let request = Item.fetchRequest()
+    //
+    //            let predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+    //
+    //            request.predicate = predicate
+    //
+    //            let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+    //
+    //            request.sortDescriptors = [sortDescriptor]
+    //
+    //            //            loadItems(with: request, predicate: predicate)
+    //        }
+    //
+    //        self.tableView.reloadData()
+    //
+    //    }
+    
+
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        searchBar.searchTextField.textColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: selectedCategory?.backgroundColor ?? "#FFFFFF") ?? .flatWhite(), isFlat: true)
+        searchBar.searchTextField.tintColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: selectedCategory?.backgroundColor ?? "#FFFFFF") ?? .flatWhite(), isFlat: true)
+    
         
         loadItems()
         
@@ -393,5 +428,9 @@ extension TodoListViewController: UISearchBarDelegate{
         // Check if the trimmed text is either empty or contains only spaces
         return trimmedText.isEmpty
     }
+    
+
+    
+    
     
 }
