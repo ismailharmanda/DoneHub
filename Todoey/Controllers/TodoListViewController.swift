@@ -45,11 +45,9 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         super.viewDidLoad()
         
         searchBar.barTintColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")
+        searchBar.searchTextField.backgroundColor = .flatWhite()
         let backgroundColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")
         let contrastColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: selectedCategory?.backgroundColor ?? "#FFFFFF") ?? .flatWhite(), isFlat: true)
-        navigationController?.navigationBar.backgroundColor =  backgroundColor
-        navigationController?.navigationBar.tintColor = contrastColor
-        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: contrastColor]
         addButton.tintColor = contrastColor
     
         
@@ -58,6 +56,14 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         
         
         loadItems()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        let backgroundColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")
+        let contrastColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: selectedCategory?.backgroundColor ?? "#FFFFFF") ?? .flatWhite(), isFlat: true)
+        navigationController?.navigationBar.backgroundColor =  backgroundColor
+        navigationController?.navigationBar.tintColor = contrastColor
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: contrastColor]
     }
     
     override func viewWillDisappear(_ animated: Bool) {
