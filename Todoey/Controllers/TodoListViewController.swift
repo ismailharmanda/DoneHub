@@ -16,6 +16,7 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     
     @IBOutlet weak var searchBar: UISearchBar!
     
+    @IBOutlet weak var addButton: UIBarButtonItem!
     let realm = try! Realm()
     
     //    var itemArray = [Item]()
@@ -37,24 +38,20 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         }
     }
     
-    var originalNavBarAppearance: UINavigationBarAppearance?
+   
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         searchBar.barTintColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")
-        
-        originalNavBarAppearance = navigationController?.navigationBar.standardAppearance
-        
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: selectedCategory?.backgroundColor ?? "#FFFFFF") ?? .flatWhite(), isFlat: true) ]
-        appearance.backgroundColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")
-        // istediğiniz renk
-        
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
+        let backgroundColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "")
+        let contrastColor = UIColor.init(contrastingBlackOrWhiteColorOn: UIColor(hexString: selectedCategory?.backgroundColor ?? "#FFFFFF") ?? .flatWhite(), isFlat: true)
+        navigationController?.navigationBar.backgroundColor =  backgroundColor
+        navigationController?.navigationBar.tintColor = contrastColor
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: contrastColor]
+        addButton.tintColor = contrastColor
+    
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(handleLongPress(sender:)))
         tableView.addGestureRecognizer(longPress)
@@ -66,10 +63,9 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        if let safeOriginalNavBarAppearance = originalNavBarAppearance{
-            navigationController?.navigationBar.standardAppearance = safeOriginalNavBarAppearance
-            navigationController?.navigationBar.scrollEdgeAppearance = safeOriginalNavBarAppearance
-        }
+
+        navigationController?.navigationBar.backgroundColor = .white
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
         
     }
     //MARK:  TableView Datasource Methods

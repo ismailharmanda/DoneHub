@@ -88,6 +88,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="addButton" destination="qhU-v7-rTS" id="SZJ-yA-2NY"/>
                         <outlet property="searchBar" destination="n5E-YO-i63" id="Esm-eK-K3c"/>
                     </connections>
                 </tableViewController>
