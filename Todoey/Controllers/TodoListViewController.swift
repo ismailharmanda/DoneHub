@@ -71,7 +71,7 @@ class TodoListViewController: UITableViewController, UISearchBarDelegate {
         
 
         navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
+        navigationController?.navigationBar.largeTitleTextAttributes = [.foregroundColor: UIColor.darkGray]
         
     }
     //MARK:  TableView Datasource Methods
